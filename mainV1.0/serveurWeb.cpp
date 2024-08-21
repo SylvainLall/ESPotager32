@@ -49,9 +49,7 @@ void handleRoot() {
     time_t now = time(nullptr);
     struct tm *currentTime = localtime(&now);
 
-  String versionEnCours = "1.0";  
-
-page += "<h1>ESPotager32 <small style='color:#D3D3D3; font-size: 0.6em;'>Version " + versionEnCours + "</small></h1>";
+    page += "<h1>ESPotager32</h1>";
     page += "<h3 id='dateActuelle'>Heure actuelle: " + String(currentTime->tm_hour) + ":" + (currentTime->tm_min < 10 ? "0" : "") + String(currentTime->tm_min) +
             " le " + String(currentTime->tm_mday) + "/" + String(currentTime->tm_mon + 1) + "/" + String(currentTime->tm_year + 1900) + "</h3>";
 
