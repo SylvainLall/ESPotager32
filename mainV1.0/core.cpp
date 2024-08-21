@@ -46,13 +46,13 @@ void gererArrosage() {
                     arrosageEnCours[i] = true; // Marquer l'arrosage comme en cours
                     dernierJourArrosage[i] = jourActuel; // Mettre à jour le jour du dernier arrosage
                 }
-
+              }
                 // Si l'arrosage est en cours et que la durée est écoulée
                 if (arrosageEnCours[i] && millis() - lastMillis[i] >= ligne.duree * 60000) {
                     digitalWrite(ligne.relaisPin, LOW); // Désactiver le relais
                     arrosageEnCours[i] = false; // Marquer l'arrosage comme terminé
                 }
-            }
+            
         }
     }
 }
