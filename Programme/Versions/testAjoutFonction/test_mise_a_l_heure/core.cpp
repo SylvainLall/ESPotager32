@@ -14,10 +14,10 @@ void initRelais() {
     pinMode(ligne3.relaisPin, OUTPUT);
     pinMode(ligne4.relaisPin, OUTPUT);
 
-    digitalWrite(ligne1.relaisPin, LOW);
-    digitalWrite(ligne2.relaisPin, LOW);
-    digitalWrite(ligne3.relaisPin, LOW);
-    digitalWrite(ligne4.relaisPin, LOW);
+    digitalWrite(ligne1.relaisPin, HIGH);
+    digitalWrite(ligne2.relaisPin, HIGH);
+    digitalWrite(ligne3.relaisPin, HIGH);
+    digitalWrite(ligne4.relaisPin, HIGH);
 
     configTime(0, 0, "pool.ntp.org");  // Synchronisation NTP
 }
@@ -41,7 +41,7 @@ void gererArrosage() {
                 
                 // Si l'arrosage n'a pas encore commencé et que l'heure est atteinte
                 if (!arrosageEnCours[i] && currentTime->tm_hour == ligne.heure && currentTime->tm_min == ligne.minute) {
-                    digitalWrite(ligne.relaisPin, HIGH); // Activer le relais
+                    digitalWrite(ligne.relaisPin, LOW); // Activer le relais
                     lastMillis[i] = millis(); // Enregistrer le temps de début
                     arrosageEnCours[i] = true; // Marquer l'arrosage comme en cours
                     dernierJourArrosage[i] = jourActuel; // Mettre à jour le jour du dernier arrosage
@@ -49,7 +49,7 @@ void gererArrosage() {
               }
                 // Si l'arrosage est en cours et que la durée est écoulée
                 if (arrosageEnCours[i] && millis() - lastMillis[i] >= ligne.duree * 60000) {
-                    digitalWrite(ligne.relaisPin, LOW); // Désactiver le relais
+                    digitalWrite(ligne.relaisPin, HIGH); // Désactiver le relais
                     arrosageEnCours[i] = false; // Marquer l'arrosage comme terminé
                 }
             
