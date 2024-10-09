@@ -1,3 +1,14 @@
+//-----------------------------------
+// Ce code gère le stockage persistant des paramètres d'arrosage en utilisant la NVS (Non-Volatile Storage) de l'ESP32.
+// Il permet de sauvegarder et charger les paramètres (état, heure, minute, durée, fréquence) pour 4 lignes d'arrosage.
+
+// 1. `initNVS()` : Initialise la NVS avec un espace de noms spécifique ("arrosage").
+// 2. `sauvegarderParametres()` : Sauvegarde les paramètres des 4 lignes d'arrosage dans la NVS.
+// 3. `chargerParametres()` : Charge les paramètres des 4 lignes d'arrosage depuis la NVS, avec des valeurs par défaut si elles n'existent pas.
+// 4. `closeNVS()` : Ferme la NVS pour libérer les ressources.
+//------------------------------------
+
+
 #include "core.h"
 #include <Preferences.h>
 // Instance de Preferences
