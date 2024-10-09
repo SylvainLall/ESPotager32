@@ -260,3 +260,50 @@ void handleSetTime() {
 }
 
 
+_--------_-----------------------------
+
+
+/*
+ * Fonctionnement du serveur web sur l'ESP32 :
+ *
+ * Ce programme met en place un serveur web sur l'ESP32 en mode point d'accès (AP) en utilisant la bibliothèque `WebServer`.
+ * Le serveur écoute les requêtes HTTP sur le port 80 et répond à plusieurs chemins définis. Ces chemins sont associés à des 
+ * fonctions spécifiques qui gèrent les requêtes reçues par le serveur.
+ *
+ * 1. `initServeurWeb()` :
+ *    - Cette fonction initialise le serveur web en définissant les routes associées aux différentes actions de l'application.
+ *    - Routes définies :
+ *      - `/` : Appel de la fonction `handleRoot()`, qui génère la page principale HTML avec l'interface utilisateur pour contrôler l'arrosage.
+ *      - `/submit` : Appel de la fonction `handleSubmit()`, qui récupère les données des formulaires (états et paramètres des lignes d'arrosage).
+ *      - `/setTime` : Appel de la fonction `handleSetTime()`, qui permet de mettre à jour l'heure de l'ESP32 en fonction des paramètres passés via l'URL.
+ *      - Route non trouvée : Si une route est inconnue, la fonction `handleNotFound()` est appelée, qui retourne un code 404.
+ *    - Une fois les routes définies, le serveur est démarré avec `server.begin()`.
+ *    
+ * 2. `handleRoot()` :
+ *    - Cette fonction génère dynamiquement une page HTML qui sert d'interface pour l'utilisateur.
+ *    - La page affiche l'heure actuelle (en récupérant la date via `time(nullptr)`), un bouton pour synchroniser l'heure avec l'ESP32
+ *      et un formulaire permettant de configurer les paramètres des 4 lignes d'arrosage.
+ *    - Si l'ESP32 n'a pas encore été mis à l'heure depuis son redémarrage (`heureAJour` est faux), un message d'avertissement s'affiche.
+ *    - Le formulaire permet à l'utilisateur de sélectionner l'état de chaque ligne (activée ou désactivée), ainsi que l'heure, la durée,
+ *      et la fréquence d'arrosage.
+ *    - Après soumission du formulaire, les données sont envoyées à l'ESP32 via la route `/submit`.
+ *    
+ * 3. `handleSubmit()` :
+ *    - Cette fonction traite les données envoyées par le formulaire de la page principale.
+ *    - Elle vérifie si les paramètres des différentes lignes d'arrosage (état, heure, minute, durée, fréquence) ont été envoyés
+ *      via les arguments HTTP. Si c'est le cas, elle les met à jour dans les variables correspondantes (ligne1, ligne2, etc.).
+ *    - Une fois les paramètres mis à jour, ils sont sauvegardés dans la mémoire non volatile (NVS) de l'ESP32 pour être persistants.
+ *    - Le serveur renvoie ensuite une réponse HTML confirmant que les paramètres ont été mis à jour avec un lien pour revenir à la page principale.
+ *    
+ * 4. `handleNotFound()` :
+ *    - Cette fonction est appelée lorsque l'utilisateur accède à une route non définie.
+ *    - Elle renvoie une réponse 404 avec un simple message "Page non trouvée".
+ *    
+ * 5. `handleSetTime()` :
+ *    - Cette fonction met à jour l'heure de l'ESP32 en fonction des paramètres passés via l'URL (heure, minutes, secondes, jour, mois, année).
+ *    - Elle utilise la fonction `mktime()` pour convertir les paramètres en un timestamp, qui est ensuite appliqué à l'ESP32 avec `settimeofday()`.
+ *    - Une fois l'heure mise à jour, le drapeau `heureAJour` est activé pour indiquer que la mise à l'heure a été effectuée.
+ *    - Le serveur renvoie une confirmation sous forme de page HTML, indiquant que l'heure a été mise à jour.
+ */
+
+
