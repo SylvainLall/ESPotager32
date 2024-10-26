@@ -43,10 +43,5 @@ void initNVS();
 void sauvegarderParametres();
 void chargerParametres();
 
-//--------------------------------------log.h ------------------------------------
-
-void ajouterLog(const String &message);
-String obtenirLogs();
-
 
 #endif // CORE_H

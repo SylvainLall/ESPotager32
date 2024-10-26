@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 // LES PIN DES RELAIS SONT A REMPLIR ICI !!!
-LigneArrosage ligne1 = {6, 0, 30, 13, 0, 1};  // Par défaut : 6h, 0 min ,duree 30 min, PIN 15, etat desactivé, frequence arrosage 1
+LigneArrosage ligne1 = {6, 0, 30, 22, 0, 1};  // Par défaut : 6h, 0 min ,duree 30 min, PIN 15, etat desactivé, frequence arrosage 1
 LigneArrosage ligne2 = {6, 0, 30, 14, 0, 1};
 LigneArrosage ligne3 = {6, 0, 30, 33, 0, 1};
 LigneArrosage ligne4 = {6, 0, 30, 34, 0, 1};
@@ -44,15 +44,17 @@ void gererArrosage() {
                     digitalWrite(ligne.relaisPin, LOW); // Activer le relais
                     lastMillis[i] = millis(); // Enregistrer le temps de début
                     arrosageEnCours[i] = true; // Marquer l'arrosage comme en cours
+                    Serial.print("activation de la ligne ");
+                    Serial.println((i+1));
                     dernierJourArrosage[i] = jourActuel; // Mettre à jour le jour du dernier arrosage
-                    ajouterLog("Activation ligne " + String(i + 1));
                 }
               }
                 // Si l'arrosage est en cours et que la durée est écoulée
                 if (arrosageEnCours[i] && millis() - lastMillis[i] >= ligne.duree * 60000) {
                     digitalWrite(ligne.relaisPin, HIGH); // Désactiver le relais
+                    Serial.print("desactivation de la ligne");
+                    Serial.println((i+1));
                     arrosageEnCours[i] = false; // Marquer l'arrosage comme terminé
-                    ajouterLog("Désactivation ligne " + String(i + 1));
                 }
             
         }

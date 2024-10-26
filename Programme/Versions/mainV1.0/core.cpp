@@ -3,8 +3,8 @@
 #include <Arduino.h>
 
 // LES PIN DES RELAIS SONT A REMPLIR ICI !!!
-LigneArrosage ligne1 = {6, 0, 30, 4, 0, 1};  // Par défaut : 6h, 0 min ,duree 30 min, PIN 15, etat desactivé, frequence arrosage 1
-LigneArrosage ligne2 = {6, 0, 30, 5, 0, 1};
+LigneArrosage ligne1 = {6, 0, 30, 15, 0, 1};  // Par défaut : 6h, 0 min ,duree 30 min, PIN 15, etat desactivé, frequence arrosage 1
+LigneArrosage ligne2 = {6, 0, 30, 16, 0, 1};
 LigneArrosage ligne3 = {6, 0, 30, 18, 0, 1};
 LigneArrosage ligne4 = {6, 0, 30, 19, 0, 1};
 

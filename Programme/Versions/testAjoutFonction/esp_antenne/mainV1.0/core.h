@@ -39,14 +39,9 @@ void handleSubmit();
 void handleSetTime();
 
 //---------------------------------------memorisation.cpp--------------------------
-void initNVS();
-void sauvegarderParametres();
-void chargerParametres();
-
-//--------------------------------------log.h ------------------------------------
-
-void ajouterLog(const String &message);
-String obtenirLogs();
+//void initNVS();
+//void sauvegarderParametres();
+//void chargerParametres();
 
 
 #endif // CORE_H
