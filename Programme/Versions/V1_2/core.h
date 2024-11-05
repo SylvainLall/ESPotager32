@@ -43,5 +43,8 @@ void initNVS();
 void sauvegarderParametres();
 void chargerParametres();
 
+// -------------------------------------- logger ----------------------------------
 
+void initLogSystem(WebServer &server);
+void ajouterLog(const String &message);
 #endif // CORE_H

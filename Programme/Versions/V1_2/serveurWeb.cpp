@@ -53,6 +53,18 @@ void handleRoot() {
     page += "<h3 id='dateActuelle'>Heure actuelle: " + String(currentTime->tm_hour) + ":" + (currentTime->tm_min < 10 ? "0" : "") + String(currentTime->tm_min) +
             " le " + String(currentTime->tm_mday) + "/" + String(currentTime->tm_mon + 1) + "/" + String(currentTime->tm_year + 1900) + "</h3>";
 
+
+//bouton de redirection vers la page de log 
+ page += "<style>";
+    page += "body { font-family: Arial, sans-serif; margin: 0; padding: 0; }";
+    page += ".log-btn { position: absolute; top: 10px; right: 10px; padding: 10px 20px; background-color: #808080; color: white; border: none; border-radius: 4px; cursor: pointer; }";
+    page += "</style></head><body>";
+    page += "<button class='log-btn' onclick=\"window.location.href='/log'\">Log</button>";
+
+    
+
+
+
     // Génération du bouton "Mettre à l'heure"
     page += "<button id='mettreAHeure' onclick='mettreAHeure()'>Mettre a l'heure</button>";
 
@@ -218,7 +230,12 @@ void handleSubmit() {
     sauvegarderParametres();
 
      // Répondre à la demande
-    server.send(200, "text/html", "<html><body><h1>Parametres mis a jour !</h1><a href=\"/\">Retour</a></body></html>");
+    server.send(200, "text/html",
+            "<html><body><h1>Parametres mis a jour !</h1>"
+            "<button onclick=\"window.location.href='/'\" "
+            "style=\"padding: 10px 20px; background-color: #D3D3D3; color: black; "
+            "border: none; border-radius: 4px; cursor: pointer;\">Retour</button>"
+            "</body></html>");
 }
 
 void handleNotFound() {
@@ -253,6 +270,7 @@ void handleSetTime() {
 
         // Répondre avec un message de confirmation et un bouton de retour
        server.send(200, "text/html", "<html><body><h1>Heure mise  jour !</h1><a href=\"/\">Retour</a></body></html>");
+       ajouterLog("mise a l'heure du systeme");
         
     } else {
         server.send(400, "text/plain", "Paramètres manquants");

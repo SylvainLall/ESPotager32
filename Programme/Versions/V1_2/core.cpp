@@ -46,6 +46,7 @@ void gererArrosage() {
                     arrosageEnCours[i] = true; // Marquer l'arrosage comme en cours
                     Serial.print("activation de la ligne ");
                     Serial.println((i+1));
+                    ajouterLog("activation de la ligne " + String(i + 1));
                     dernierJourArrosage[i] = jourActuel; // Mettre à jour le jour du dernier arrosage
                 }
               }
@@ -54,6 +55,7 @@ void gererArrosage() {
                     digitalWrite(ligne.relaisPin, HIGH); // Désactiver le relais
                     Serial.print("desactivation de la ligne");
                     Serial.println((i+1));
+                    ajouterLog("desactivation de la ligne " + String(i + 1));
                     arrosageEnCours[i] = false; // Marquer l'arrosage comme terminé
                 }
             
