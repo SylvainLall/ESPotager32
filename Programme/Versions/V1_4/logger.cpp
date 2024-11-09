@@ -61,7 +61,7 @@ void ajouterLog(const String &message) {
 }
 
 // Génère la page HTML des logs
-String genererPageLog() {
+void handleLog() {
        String page = "<html><head><title>Logs du Systeme</title>";
     page += "<style>";
     page += "body { font-family: Arial, sans-serif; margin: 0; padding: 0; }";
@@ -95,15 +95,10 @@ String genererPageLog() {
  
      page += "<button class='back-btn' onclick=\"window.location.href='/'\">Retour</button>";
    
-    return page;
+    server.send(200, "text/html", page);
 }
 
-// Configure la route "/log" pour afficher les logs, renvoyant une page  genererPageLog() lors des requêtes GET.
-void initLogSystem(WebServer &server) {
-    server.on("/log", HTTP_GET, [&server]() {
-        server.send(200, "text/html", genererPageLog());
-    });
-}
+
 
 /*pour info   
 //bouton de redirection vers la page de log a mettre sur le serveur web : 

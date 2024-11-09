@@ -1,60 +1,3 @@
-/*
- * Module : Serveur Web pour la gestion des paramètres d'arrosage 
- * 
- * Ce code met en place un serveur Web sur un ESP32 pour contrôler un 
- * système d'arrosage à travers une interface accessible via un navigateur. 
- * Les principales fonctions du code et leur interaction sont décrites ci-dessous :
- * 
- * 1. **Initialisation du serveur (`initServeurWeb()`)** : 
- *    - Configure le serveur Web pour écouter sur le port 80.
- *    - Définit les routes suivantes :
- *      - `/` : Appelle la fonction `handleRoot()` pour afficher la page d'accueil.
- *      - `/submit` : Appelle la fonction `handleSubmit()` pour traiter les 
- *        données du formulaire soumis par l'utilisateur.
- *      - `/setTime` : Appelle la fonction `handleSetTime()` pour mettre à 
- *        jour l'heure du système.
- *      - `handleNotFound()` : Gère les requêtes vers des routes non définies.
- * 
- * 2. **Affichage de la page d'accueil (`handleRoot()`)** : 
- *    - Génère dynamiquement le code HTML de la page qui affiche l'heure actuelle, 
- *      les paramètres d'arrosage pour plusieurs lignes (4 lignes), et un 
- *      bouton pour mettre à jour l'heure.
- *    - Utilise les valeurs actuelles (état, heure, durée, fréquence) de chaque 
- *      ligne d'arrosage pour préremplir les champs du formulaire.
- *    - Affiche également des informations sur le prochain arrosage si la ligne 
- *      est activée.
- *    - Inclut un script JavaScript pour gérer la mise à jour de l'heure par 
- *      appel AJAX à la route `/setTime`.
-
- * 3. **Soumission des paramètres (`handleSubmit()`)** : 
- *    - Cette fonction est appelée lorsque l'utilisateur soumet le formulaire.
- *    - Elle vérifie les arguments reçus via `server.hasArg()` pour chaque ligne 
- *      d'arrosage (état, heure, minute, durée, fréquence).
- *    - Met à jour les valeurs correspondantes dans les structures `ligne1`, 
- *      `ligne2`, `ligne3`, et `ligne4`.
- *    - Une fois les paramètres mis à jour, la fonction appelle 
- *      `sauvegarderParametres()` pour sauvegarder les modifications dans la 
- *      mémoire non volatile (NVS).
- *    - Envoie une réponse HTML pour informer l'utilisateur que les paramètres 
- *      ont été mis à jour avec un bouton de retour vers la page d'accueil.
-
- * 4. **Gestion des erreurs (`handleNotFound()`)** : 
- *    - Cette fonction est appelée lorsque l'utilisateur tente d'accéder à une 
- *      route qui n'est pas définie.
- *    - Elle envoie un message d'erreur 404 ("Page non trouvée").
-
- * 5. **Mise à jour de l'heure (`handleSetTime()`)** : 
- *    - Appelée lorsqu'une requête est faite à la route `/setTime`.
- *    - Récupère les arguments nécessaires (heure, minutes, secondes, jour, mois, 
- *      année) pour mettre à jour l'heure du système.
- *    - Crée une structure `tm` à partir de ces arguments, convertit cette 
- *      structure en `time_t`, et utilise `settimeofday()` pour mettre à jour 
- *      l'heure du système.
- *    - Met à jour le drapeau `heureAJour` pour indiquer que l'heure a été 
- *      mise à jour.
- *    - Envoie une réponse HTML confirmant la mise à jour de l'heure avec un 
- *      lien de retour vers la page d'accueil.
- */
 
 
 
@@ -71,7 +14,8 @@ void initServeurWeb() {
     server.on("/submit", handleSubmit);
     server.onNotFound(handleNotFound);
     server.on("/setTime", handleSetTime);
-    
+    server.on("/log", handleLog);
+    server.on("/configuration", handleConfig);
 
     server.begin();
     Serial.println("Serveur web démarré en mode AP.");
@@ -114,10 +58,19 @@ void handleRoot() {
             " le " + String(currentTime->tm_mday) + "/" + String(currentTime->tm_mon + 1) + "/" + String(currentTime->tm_year + 1900) + "</h3>";
 
 
+//bouton de redirection vers la page de conf
+ page += "<style>";
+    page += "body { font-family: Arial, sans-serif; margin: 0; padding: 0; }";
+    page += ".config-btn { position: absolute; top: 15px; right: 70px; padding: 10px 10px; background-color: #808080; color: white; border: none; border-radius: 4px; cursor: pointer; }";
+    page += "</style></head><body>";
+    page += "<button class='config-btn' onclick=\"window.location.href='/configuration'\">Configuration</button>";
+
+
+
 //bouton de redirection vers la page de log 
  page += "<style>";
     page += "body { font-family: Arial, sans-serif; margin: 0; padding: 0; }";
-    page += ".log-btn { position: absolute; top: 10px; right: 10px; padding: 10px 20px; background-color: #808080; color: white; border: none; border-radius: 4px; cursor: pointer; }";
+    page += ".log-btn { position: absolute; top: 15px; right: 10px; padding: 10px 10px; background-color: #808080; color: white; border: none; border-radius: 4px; cursor: pointer; }";
     page += "</style></head><body>";
     page += "<button class='log-btn' onclick=\"window.location.href='/log'\">Log</button>";
 
@@ -331,6 +284,7 @@ void handleSetTime() {
         // Répondre avec un message de confirmation et un bouton de retour
        server.send(200, "text/html", "<html><body><h1>Heure mise  jour !</h1><a href=\"/\">Retour</a></body></html>");
        ajouterLog("mise a l'heure du systeme");
+       
         
     } else {
         server.send(400, "text/plain", "Paramètres manquants");

@@ -10,7 +10,7 @@
 8888888888 "Y8888P"  888        "Y88P"   "Y888 "Y888888  "Y88888  "Y8888  888    "Y8888P"  888888888  
                                                              888                                      
                                                         Y8b d88P                                      
-                                                         "Y88P"         V1.1                        
+                                                         "Y88P"         V1.3                        
 /*
  * ----------------------------------------------------------------------------
  *                          NOTICE
@@ -41,7 +41,7 @@
  * ----------------------------------------------------------------------------
  */
 
-*/
+
 
 
 
@@ -54,16 +54,25 @@
 
 unsigned long wifiStartMillis = 0;
 bool wifiActive = false;
+bool modeWifiBouton = 0;
+bool modewifiAP = 1;
 
-void activerWifi() {
+void activerWifiBouton() {
     WiFi.softAP("ESPotager32", "1234");  // Changez le SSID et le mot de passe si nécessaire
     Serial.println("Wi-Fi active en mode Point d'acces");
     Serial.println("IP de l'AP: " + WiFi.softAPIP().toString());
     wifiActive = true;
     wifiStartMillis = millis();  // Enregistre l'heure d'activation
 }
-
-void desactiverWifi() {
+void activerWifiAP() {
+  if(wifiActive == false){
+    WiFi.softAP("ESPotager32", "1234");  // Changez le SSID et le mot de passe si nécessaire
+    Serial.println("Wi-Fi active en mode Point d'acces");
+    Serial.println("IP de l'AP: " + WiFi.softAPIP().toString());
+    wifiActive = true;
+  } 
+}
+void desactiverWifiAP() {
     WiFi.softAPdisconnect(true);  // Déconnecte le mode Point d'accès
     Serial.println("Wi-Fi desactive");
     wifiActive = false;
@@ -80,27 +89,42 @@ void setup() {
 
     initRelais();      // Initialiser les relais
     initServeurWeb();  // Initialiser le serveur web
-
-    initLogSystem(server);    
+     //initConfigurationSystem(server); // Initialisation de la configuration
+      
     ajouterLog("Demarrage du systeme");
+}
+
+void WifiEnModeBouton() {
+    // Vérifie si le bouton est pressé et active le Wi-Fi si nécessaire
+    if (digitalRead((WIFI_BUTTON_PIN) == LOW) && wifiActive == 0 ) {  // Si bouton pressé et wifi desactivé
+        delay(50);  // Anti-rebond
+        if (digitalRead(WIFI_BUTTON_PIN) == LOW && !wifiActive) {  // Si toujours pressé et Wi-Fi inactif
+            activerWifiAP();
+            ajouterLog("Activation du Wi-Fi pour 15min");
+        }
+    }
+
+    
+    // Désactive le Wi-Fi après une heure
+    if (wifiActive && (millis() - wifiStartMillis >= WIFI_TIMEOUT_MS)) {
+        desactiverWifiAP();
+        ajouterLog("Desactivation automatique du Wi-Fi");
+    }
 }
 
 void loop() {
     server.handleClient();  // Gérer les requêtes clients
     gererArrosage();        // Gérer l'arrosage
 
-    // Vérifie si le bouton est pressé et active le Wi-Fi si nécessaire
-    if (digitalRead(WIFI_BUTTON_PIN) == LOW) {  // Si bouton pressé
-        delay(50);  // Anti-rebond
-        if (digitalRead(WIFI_BUTTON_PIN) == LOW && !wifiActive) {  // Si toujours pressé et Wi-Fi inactif
-            activerWifi();
-            ajouterLog("Activation du Wi-Fi pour 15min");
-        }
+    if( modeWifiBouton == 1){
+      WifiEnModeBouton();
     }
+   else {
+      activerWifiAP();
 
+   }
+    
+    
     // Désactive le Wi-Fi après une heure
-    if (wifiActive && (millis() - wifiStartMillis >= WIFI_TIMEOUT_MS)) {
-        desactiverWifi();
-        ajouterLog("Desactivation automatique du Wi-Fi");
-    }
+    
 }

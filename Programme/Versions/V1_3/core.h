@@ -29,6 +29,9 @@
     ----------
     Ce fichier doit être inclus dans les fichiers d'implémentation
     pour accéder aux fonctionnalités principales du système.
+    Je n'ai fait qu'un seul fichier .h pour eviter d'en avoir un par cpp. 
+    mais il faut bien séparé les variables par page en les séparant par des "-------truc.cpp-------"  
+    
 */
 
 
@@ -77,8 +80,14 @@ void initNVS();
 void sauvegarderParametres();
 void chargerParametres();
 
-// -------------------------------------- logger ----------------------------------
+// -------------------------------------- logger.cpp ----------------------------------
 
-void initLogSystem(WebServer &server);
+void handleLog();
 void ajouterLog(const String &message);
+
+//----------------------------------------configuration.cpp ---------------------------
+void handleConfig();
+
 #endif // CORE_H
+
+
